@@ -1,6 +1,6 @@
 module util.split_into_lines;
 
-import std.string, std.stdio, std.conv;
+import std.string, std.stdio, std.conv, std.ascii;
 import util.range_with_cache;
 
 /**
@@ -44,15 +44,12 @@ class SplitIntoLines : RangeWithCache!string {
  */
 string detect_newline_delim(string data) {
   // TODO: Implement a better line termination detection strategy
-  //
-  // FIXME: We can assume newlines are platform specific. D has a way of handling these. 
-  //        Any digressions are resposibility of the user, not this library.
-  return "\n";
+  return std.ascii.newline;
 }
 
 unittest {
   writeln("Testing SplitIntoLines...");
-  auto lines = new SplitIntoLines("Test\n1\n2\n3");
+  auto lines = new SplitIntoLines("Test" ~ newline ~ "1" ~ newline ~ "2" ~ newline ~ "3");
   assert(lines.empty == false);
   assert(lines.front == "Test"); lines.popFront();
   assert(lines.empty == false);
@@ -64,7 +61,7 @@ unittest {
   assert(lines.empty == true);
   
   // Test for correct behavior when newline at the end of the file
-  lines = new SplitIntoLines("Test newline at the end\n");
+  lines = new SplitIntoLines("Test newline at the end" ~ newline);
   assert(lines.empty == false);
   assert(lines.front == "Test newline at the end"); lines.popFront();
   assert(lines.empty == false);
@@ -72,7 +69,7 @@ unittest {
   assert(lines.empty == true);
 
   // Test if it's working with foreach
-  lines = new SplitIntoLines("1\n2\n3\n4");
+  lines = new SplitIntoLines("1" ~ newline ~ "2" ~ newline ~ "3" ~ newline ~ "4");
   int i = 1;
   foreach(value; lines) {
     assert(value == to!string(i));
